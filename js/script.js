@@ -42,7 +42,7 @@ function createMesh() {
 
 function render (delta) {
     requestAnimationFrame(render);
-    mesh.material.uniforms.zoom.value = 2;//Math.cos(delta / 500) + 1.5;
+    mesh.material.uniforms.zoom.value = Math.cos(delta / 500) * 0.1 + 2;
     renderer.render(scene, camera);
 }
 
