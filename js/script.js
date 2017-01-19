@@ -23,6 +23,7 @@ loader.load('js/shader/mandelbrot-fragment.glsl', data => {fragmentShader = data
 THREE.DefaultLoadingManager.onLoad = function ( ) {
     createMesh();
     render();
+    registerEventHandler();
 };
 
 function createMesh() {
@@ -30,25 +31,46 @@ function createMesh() {
     geometry = new THREE.PlaneGeometry(3, 3 * aspect);
     material = new THREE.ShaderMaterial({
         uniforms: {
-            zoom: { type: 'f', value: 0.05 },
-            julia: { type: 'vec2', value: {x: 0, y: 0} }
+            zoom: { type: 'f', value: 2.0 },
+            julia: { type: 'vec2', value: {x: 0, y: 0} },
+            mouse: { type: 'vec2', value: {x: 0, y: 0} }
         },
         vertexShader: vertexShader,
         fragmentShader: fragmentShader
     });
     mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
+
 }
 
 
 function render (delta) {
     requestAnimationFrame(render);
-    mesh.material.uniforms.zoom.value = 2;//Math.cos(delta / 500) * 0.1 + 2;
+    //mesh.material.uniforms.zoom.value = 1;//Math.cos(delta / 500) * 0.1 + 2;
     ///var julia = mesh.material.uniforms.julia.value;
     //console.log('julia %o', mesh.material.uniforms.julia);
-    mesh.material.uniforms.julia.value.x = (Math.cos(delta / 1000) - .4 ) * 0.9;
-    mesh.material.uniforms.julia.value.y = Math.sin(delta / 1000) * 1.1;
+    mesh.material.uniforms.julia.value.x = (Math.cos(delta / 1000) - .4 ) * 0.9*0.9;
+    mesh.material.uniforms.julia.value.y = Math.sin(delta / 1000) * 1.1*0.9;
     //mesh.material.uniforms.julia.y = 1;
     renderer.render(scene, camera);
 }
 
+
+function registerEventHandler() {
+
+    // Mouse Move
+    window.addEventListener('mousemove', function(event){
+        //console.log('[MOUSE] (%d, %d)', event.x, event.y);
+        mesh.material.uniforms.mouse.value.x = (event.x - window.innerWidth / 2.0) / 100;
+        mesh.material.uniforms.mouse.value.y = (event.y - window.innerHeight / 2.0) / 100;
+    });
+
+
+    // Scroll
+    window.addEventListener('mousewheel', function(event){
+        event.preventDefault();
+        // console.log('[SCROLL] %d', event.wheelDelta);
+        mesh.material.uniforms.zoom.value += event.wheelDelta / 1000.0;
+    });
+
+}
