@@ -30,7 +30,8 @@ function createMesh() {
     geometry = new THREE.PlaneGeometry(3, 3 * aspect);
     material = new THREE.ShaderMaterial({
         uniforms: {
-            zoom: { type: 'f', value: 0.05 }
+            zoom: { type: 'f', value: 0.05 },
+            julia: { type: 'vec2', value: {x: 0, y: 0} }
         },
         vertexShader: vertexShader,
         fragmentShader: fragmentShader
@@ -42,7 +43,12 @@ function createMesh() {
 
 function render (delta) {
     requestAnimationFrame(render);
-    mesh.material.uniforms.zoom.value = Math.cos(delta / 500) * 0.1 + 2;
+    mesh.material.uniforms.zoom.value = 2;//Math.cos(delta / 500) * 0.1 + 2;
+    ///var julia = mesh.material.uniforms.julia.value;
+    //console.log('julia %o', mesh.material.uniforms.julia);
+    mesh.material.uniforms.julia.value.x = (Math.cos(delta / 1000) - .4 ) * 0.9;
+    mesh.material.uniforms.julia.value.y = Math.sin(delta / 1000) * 1.1;
+    //mesh.material.uniforms.julia.y = 1;
     renderer.render(scene, camera);
 }
 
