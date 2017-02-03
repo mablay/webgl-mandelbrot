@@ -35,9 +35,21 @@ var renderTargetLinearFloatParams = {
 //------------------------------------------
 
 var init = true;
-var rtVertexShader;
+var rtVertexShader,
+  renderTextureFragmentSahder,
+  normalMapVertexShader,
+  normalMapFragmentShader;
+
 var loader = new THREE.FileLoader();
 loader.load('js/water/renderTexture-vertexShader.glsl', data => {rtVertexShader = data});
+loader.load('js/water/renderTexture-fragmentShader.glsl', data => {renderTextureFragmentSahder = data});
+
+loader.load('js/water/normalMap-vertexShader.glsl', data => {normalMapVertexShader = data});
+loader.load('js/water/normalMap-fragmentShader.glsl', data => {normalMapFragmentShader = data});
+
+loader.load('js/water/heightMap-vertexShader.glsl', data => {heightMapVertexShader = data});
+loader.load('js/water/setColor-fragmentShader.glsl', data => {setColorFragmentShader = data});
+
 
 THREE.DefaultLoadingManager.onLoad = function ( ) {
   if (init) {
@@ -206,7 +218,7 @@ function setupMats()
   screenMat = new THREE.ShaderMaterial({
     uniforms: rtUniforms,
     vertexShader: rtVertexShader,//document.getElementById( 'vs_rt' ).textContent,
-    fragmentShader: document.getElementById( 'fs_rt' ).textContent
+    fragmentShader: renderTextureFragmentSahder //document.getElementById( 'fs_rt' ).textContent
   });
 
   // main water material and mesh
@@ -225,8 +237,8 @@ function setupMats()
   };
   waterMat = new THREE.ShaderMaterial({
     uniforms: mainUniforms,
-    vertexShader: document.getElementById( 'vs_setHeight' ).textContent,
-    fragmentShader: document.getElementById( 'fs_setColor' ).textContent,
+    vertexShader: heightMapVertexShader, //document.getElementById( 'vs_setHeight' ).textContent,
+    fragmentShader: setColorFragmentShader, //document.getElementById( 'fs_setColor' ).textContent,
     transparent: true,
     side: THREE.DoubleSide
     //wireframe: true
@@ -240,8 +252,8 @@ function setupMats()
   };
   normalMat = new THREE.ShaderMaterial({
     uniforms: normalUniforms,
-    vertexShader: document.getElementById( 'vs_normal' ).textContent,
-    fragmentShader: document.getElementById( 'fs_normal' ).textContent
+    vertexShader: normalMapVertexShader, //document.getElementById( 'vs_normal' ).textContent,
+    fragmentShader: normalMapFragmentShader// document.getElementById( 'fs_normal' ).textContent
   });
 }
 
